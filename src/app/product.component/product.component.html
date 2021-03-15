@@ -1,0 +1,80 @@
+<main class="container">
+ 
+  <!-- Left Column / Headphones Image -->
+  <div class="left-column" *ngIf="productsList !== null && productsList.length > 0">
+    <ol class="gradient-list">
+      <li *ngFor="let prod of productsList; index as i;" (click)="loadProduct(prod, i)">
+        
+          {{ prod.name }}
+        
+      </li>
+    </ol>
+  </div>
+ 
+ 
+  <!-- Right Column -->
+  <div class="right-column">
+ 
+    <form [formGroup]="productFormGroup">
+
+      <!-- Product Description -->
+      <div class="product-description">
+        <h1>Products</h1>
+
+        <input class="product-name" placeholder="product name" formControlName="nameControl" id="product-name">
+        <textarea class="product-description" style="resize: none;"
+            class="form-control  cp__field__noedit text-muted p-3 mb-0 font-style-italic" rows="5"
+            formControlName="descriptionControl"
+            placeholder="product description">{{currentProduct.description}}</textarea>
+      </div>
+  
+      <!-- Product Configuration -->
+      <div class="product-configuration">
+        <h1>Product Offers</h1>
+        <!-- Coverage Configuration -->
+        <div class="coverage-config">
+          
+  
+          <div class="coverage-choose">
+            <button (click)="setSpecialStatus('fc')" class="btn" 
+              [ngClass]="{'cart-btn' : currentProduct.hasFullCoverage, 'cart-btn-default': !currentProduct.hasFullCoverage}">
+              Full Coverage
+            </button>
+            <button (click)="setSpecialStatus('mc')" class="btn" 
+              [ngClass]="{'cart-btn' : currentProduct.hasMegaCoverage, 'cart-btn-default': !currentProduct.hasMegaCoverage}">
+              Mega Coverage
+            </button>
+            <button (click)="setSpecialStatus('sfc')" class="btn" 
+              [ngClass]="{'cart-btn' : currentProduct.hasSpecialFullCoverage, 'cart-btn-default': !currentProduct.hasSpecialFullCoverage}">
+              Special Full Coverage
+            </button>
+            <button (click)="setSpecialStatus('ss')" class="btn" 
+              [ngClass]="{'cart-btn' : currentProduct.hasSuperSale, 'cart-btn-default': !currentProduct.hasSuperSale}">
+              Super Sale
+            </button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Product Pricing -->
+      <div class="product-price">
+        <div>
+          <span>Price </span>
+          <input type="text" placeholder="price" formControlName="priceControl" (keydown)="isNumeric($event)">
+        </div>
+        <div>
+          <span>Sell-in</span>
+          <input type="text" placeholder="sellin" formControlName="sellInControl"  id="product-sellin">
+        </div>
+        <br><br><br>
+        <button *ngIf="mode ==='new'" class="btn save-btn" (click)="addNewProduct()" [disabled]="!productFormGroup.valid">Add Product</button>
+        <button *ngIf="mode ==='update'" class="btn save-btn" (click)="updateProduct()" [disabled]="!productFormGroup.valid">Update Product</button>
+        <button *ngIf="mode ==='update'" class="btn save-btn" (click)="clearProduct()" >Clear Product</button>
+      </div>
+
+    </form>
+    
+
+
+  </div>
+</main>

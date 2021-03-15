@@ -131,6 +131,9 @@
           "configurations": {
             "production": {
               "browserTarget": "test-price-update:build:production"
+            },
+            "30days": {
+              "browserTarget": "test-price-update:build:30days"
             }
           }
         },

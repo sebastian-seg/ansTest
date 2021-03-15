@@ -7,7 +7,7 @@ html, body {
   }
    
   .container {
-    max-width: 1200px;
+    max-width: 1920px;
     margin: 0 auto;
     padding: 15px;
     display: flex;
@@ -15,14 +15,15 @@ html, body {
 
   /* Columns */
 .left-column {
-    width: 25%;
+    min-width: 300px;
     position: relative;
     right: 75px;
   }
    
 .right-column {
     width: 65%;
-    margin-top: 60px;
+    min-width: 500px;
+    margin-top: -60px;
   }
 
   /* Product Description */
@@ -94,22 +95,26 @@ html, body {
   }
   .cart-btn {
     
-    background-color: #7DC855;
+    background-color: #5a2670;
     
     color: #FFFFFF;
   }
   .cart-btn:hover {
-    background-color: #64af3d;
+    background-color: #5a2670;
   }
 
   .save-btn {
     
-    background-color: #1976d2;
+    background-color: #c1b5fd;
     
     color: #FFFFFF;
   }
   .save-btn:hover {
-    background-color: #4689cc;
+    background-color: #5a2670;
+  }
+
+  .car-insurance-action-btn {
+    min-width: 265px;
   }
 
   .cart-btn-default {
@@ -128,6 +133,25 @@ html, body {
       position: relative;
       display: block;
       top: 10px;
+  }
+
+  .numeric-data {
+    display: inline-flex;
+    padding-bottom: 10px;
+    margin-right: 10px;
+  }
+
+  .numeric-data span {
+    min-width: 70px;
+  }
+
+  .numeric-data input {
+    max-width: 100px;
+  }
+
+  #results {
+    max-height: 700px;
+    overflow-y: auto;
   }
   
   /* Responsive */
@@ -179,7 +203,6 @@ $white: #fafafa;
 }
 
 
-
 /*** STYLE ***/
 *,
 *:before,
@@ -221,6 +244,7 @@ ol.gradient-list {
     min-height: 3rem;
     padding: 1rem 1rem 1rem 3rem;
     position: relative;
+    cursor:pointer;
     &::before,
     &::after {
       background: linear-gradient(135deg, $blue 0%,$green 100%);

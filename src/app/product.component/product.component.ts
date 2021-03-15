@@ -1,8 +1,10 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Product } from '../models/product';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+// import { NgbModule, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { OnlyDigitHelper } from '../utils/utils';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -15,7 +17,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class ProductComponent implements OnInit {
 
     constructor(
-      private onlyDigitHelper: OnlyDigitHelper
+      private onlyDigitHelper: OnlyDigitHelper,
+      private modalService: NgbModal
     ) { }
     
     productsList: Product[] = [];
@@ -25,8 +28,10 @@ export class ProductComponent implements OnInit {
     productName:string = '';
     productDescription: string = '';
     mode:string = 'new';
-    isValidProduct = false;
 
+    resultsToDisplay:string = '';
+
+    carInsuranceProjection:Product[][]=[];
     
     productFormGroup = new FormGroup({
 
@@ -39,24 +44,19 @@ export class ProductComponent implements OnInit {
     ngOnInit(){
       this.getPersistedData();
       this.setDefaultData();
+
+      let shouldRunProjectionOnStart = environment.shouldRunProjectionOnStart;
+      if(shouldRunProjectionOnStart){
+        if(this.productsList !== null && this.productsList.length > 0) this.show30DaysProjectionResults();
+        else this.resultsToDisplay = 'You tried to project prices over 30 days, but you had no persisted products to work with.'
+      }
     }
 
     getPersistedData(){
       let productsListAsPlainText = localStorage.getItem("productsList");
       if(productsListAsPlainText !== null && productsListAsPlainText !== ''){
-        debugger;
         this.productsList = JSON.parse(productsListAsPlainText);
       }
-    }
-
-    ngDoCheck(){
-      if(this.currentProduct.description !== '' && this.currentProduct.name !== '' && this.currentProduct.price > 0 && this.currentProduct.sellIn > 0){
-        this.isValidProduct = true;
-      }
-      else
-        this.isValidProduct = false;
-
-
     }
 
     setDefaultData(){
@@ -133,10 +133,8 @@ export class ProductComponent implements OnInit {
       this.productsList[this.selectedProductIndex] = updatedProduct;
     }
 
-    newCarInsurance(){
-
-    }
-
+    // Sets the specific product status/property
+    // This was the "product name" in the former implementation
     setSpecialStatus(specialProperty: string){
 
       switch (specialProperty) {
@@ -188,5 +186,85 @@ export class ProductComponent implements OnInit {
       this.onlyDigitHelper.isNumeric(event);
     }
     
+    updateAndShowPrice(){
+      let updatedProducts:Product[] = this.updatePrice();
+      var str = JSON.stringify(updatedProducts, null, 2); // spacing level = 2
+      this.resultsToDisplay = str;
+    }
+
+    //Updates the price once, ideally, at the end of the day, according to the test's statement
+    updatePrice(): Product[]{
+      if(this.productsList !== null && this.productsList.length > 0){
+        let carInsurance:Product[] = [];
+        this.productsList.forEach(prod => {
+
+          let updatedProduct:Product = {
+            description: prod.description,
+            hasFullCoverage: prod.hasFullCoverage,
+            hasMegaCoverage: prod.hasMegaCoverage,
+            hasSpecialFullCoverage: prod.hasSpecialFullCoverage,
+            hasSuperSale: prod.hasSuperSale,
+            name: prod.name,
+            price: prod.price,
+            sellIn: prod.sellIn
+          }
+          let degradationFactor:number = 0;
+
+          if(updatedProduct.hasFullCoverage){
+            degradationFactor = -1;
+            if(updatedProduct.sellIn <= 0) degradationFactor = -2;
+          }
+          if(prod.hasMegaCoverage){
+            // price never decreases
+          }
+          if(updatedProduct.hasSpecialFullCoverage){
+            degradationFactor = -1;
+            if(updatedProduct.sellIn <= 10 && updatedProduct.sellIn > 5) degradationFactor = -2;
+            if(updatedProduct.sellIn <= 5 && updatedProduct.sellIn > 0) degradationFactor = -3;
+            if(updatedProduct.sellIn === 0) degradationFactor = updatedProduct.price;
+          }
+          if(updatedProduct.hasSuperSale){
+            degradationFactor = 2;
+            if(updatedProduct.sellIn <= 0) degradationFactor = 2*degradationFactor;
+          }
+
+          let updatedPrice:number = 0;
+          updatedPrice = prod.price - degradationFactor;
+          if(updatedPrice <= 0) updatedPrice = 0;
+          if(updatedPrice >= 50) updatedPrice = 50;
+
+          updatedProduct.price = updatedPrice;
+          updatedProduct.sellIn = updatedProduct.sellIn-1;
+
+          carInsurance.push(updatedProduct);
+        })
+
+        //this.carInsuranceProjection.push(carInsurance);
+        return carInsurance;
+      }
+      else return null;
+    }
+
+    show30DaysProjectionResults(){
+      let projection:Product[][] = this.product30DaysProjection();
+      var str = JSON.stringify(projection, null, 2); // spacing level = 2
+      this.resultsToDisplay = str;
+    }
+
+    //Updates/Projects prices for producs throughout 30 days
+    product30DaysProjection():Product[][]{
+
+      for (let i = 0; i < 30; i++) {
+        let carInsurance:Product[] = [];
+        carInsurance = this.updatePrice();
+        if(carInsurance !== null && carInsurance.length > 0){
+          this.carInsuranceProjection.push(carInsurance);
+        }
+      }
+
+      return this.carInsuranceProjection;
+    }
+
     
+  
 }

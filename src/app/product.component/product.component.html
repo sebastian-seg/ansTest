@@ -1,22 +1,28 @@
 <main class="container">
  
-  <!-- Left Column / Headphones Image -->
+  <!-- Left Column / Products List -->
   <div class="left-column" *ngIf="productsList !== null && productsList.length > 0">
-    <button class="btn save-btn" (click)="persistList()">Persist Products List</button>
-    <button class="btn save-btn" (click)="clearPersistedList()">Clear Persisted Products List</button>
-    <button class="btn save-btn" (click)="clearCurrentProdcutsList()">Clear Current Products List</button>
+    <button class="btn save-btn car-insurance-action-btn" (click)="persistList()">Persist "Car Insurance"</button>
+    <button class="btn save-btn car-insurance-action-btn" (click)="clearPersistedList()">Clear "Car Insurance" (persisted)</button>
+    <button class="btn save-btn car-insurance-action-btn" (click)="clearCurrentProdcutsList()">Clear "Car Insurance"</button>
 
+    <button class="btn save-btn car-insurance-action-btn" (click)="updateAndShowPrice()">Update Price (1 day)</button>
+    <button class="btn save-btn car-insurance-action-btn" (click)="show30DaysProjectionResults()">Price Projection (30 days)</button>
+    
+  </div>
+
+  <!-- Left Column / Products List -->
+  <div class="left-column" *ngIf="productsList !== null && productsList.length > 0">
+    
     <ol class="gradient-list">
       <li *ngFor="let prod of productsList; index as i;" (click)="loadProduct(prod, i)">
-        
           {{ prod.name }}
-        
       </li>
     </ol>
   </div>
  
  
-  <!-- Right Column -->
+  <!-- Right Columns -->
   <div class="right-column">
  
     <form [formGroup]="productFormGroup">
@@ -37,7 +43,6 @@
         <h1>Product Offers</h1>
         <!-- Coverage Configuration -->
         <div class="coverage-config">
-          
   
           <div class="coverage-choose">
             <button (click)="setSpecialStatus('fc')" class="btn" 
@@ -62,23 +67,60 @@
   
       <!-- Product Pricing -->
       <div class="product-price">
-        <div>
+        <div class="numeric-data">
           <span>Price </span>
           <input type="text" placeholder="price" formControlName="priceControl" (keydown)="isNumeric($event)">
         </div>
-        <div>
+        <div class="numeric-data">
           <span>Sell-in</span>
           <input type="text" placeholder="sellin" formControlName="sellInControl"  id="product-sellin">
         </div>
         <br><br><br>
         <button *ngIf="mode ==='new'" class="btn save-btn" (click)="addNewProduct()" [disabled]="!productFormGroup.valid">Add Product</button>
         <button *ngIf="mode ==='update'" class="btn save-btn" (click)="updateProduct()" [disabled]="!productFormGroup.valid">Update Product</button>
-        <button *ngIf="mode ==='update'" class="btn save-btn" (click)="clearProduct()" >Clear Product</button>
+        <button *ngIf="mode ==='update'" class="btn save-btn" (click)="clearProduct()" >Clear Form</button>
       </div>
 
     </form>
-    
-
 
   </div>
+
+  <div class="right-column product-description" *ngIf="resultsToDisplay !== null && resultsToDisplay.length > 0">
+    <h1>Results</h1>
+    <br>
+    <pre id="results">{{ resultsToDisplay }}</pre>
+  </div>
+
+  <!-- <div class="price-update-modal">
+    <ng-template #content let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="dateOfBirth">Date of birth</label>
+            <div class="input-group">
+              <input id="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+      </div>
+    </ng-template>
+    
+    <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
+    
+    <hr>
+    
+    <pre>{{ closeResult }}</pre>
+  </div> -->
 </main>

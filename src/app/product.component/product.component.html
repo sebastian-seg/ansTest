@@ -2,6 +2,10 @@
  
   <!-- Left Column / Headphones Image -->
   <div class="left-column" *ngIf="productsList !== null && productsList.length > 0">
+    <button class="btn save-btn" (click)="persistList()">Persist Products List</button>
+    <button class="btn save-btn" (click)="clearPersistedList()">Clear Persisted Products List</button>
+    <button class="btn save-btn" (click)="clearCurrentProdcutsList()">Clear Current Products List</button>
+
     <ol class="gradient-list">
       <li *ngFor="let prod of productsList; index as i;" (click)="loadProduct(prod, i)">
         

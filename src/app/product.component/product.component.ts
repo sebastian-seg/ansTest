@@ -37,11 +37,16 @@ export class ProductComponent implements OnInit {
     });
 
     ngOnInit(){
+      this.getPersistedData();
       this.setDefaultData();
     }
 
-    buildFormControl(){
-     
+    getPersistedData(){
+      let productsListAsPlainText = localStorage.getItem("productsList");
+      if(productsListAsPlainText !== null && productsListAsPlainText !== ''){
+        debugger;
+        this.productsList = JSON.parse(productsListAsPlainText);
+      }
     }
 
     ngDoCheck(){
@@ -164,6 +169,19 @@ export class ProductComponent implements OnInit {
           return;
       }
 
+    }
+
+    persistList(){
+      let productsListAsPlainText = JSON.stringify(this.productsList);
+      localStorage.setItem("productsList", productsListAsPlainText);
+    }
+
+    clearPersistedList(){
+      localStorage.setItem("productsList", '');
+    }
+
+    clearCurrentProdcutsList(){
+      this.productsList = [];
     }
 
     isNumeric(event) {
